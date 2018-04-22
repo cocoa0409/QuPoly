@@ -5,7 +5,6 @@
 //  Created by 兆吉 王 on 22/04/2018.
 //  Copyright © 2018 兆吉 王. All rights reserved.
 //
-
 #ifndef Triple_h
 #define Triple_h
 
@@ -52,6 +51,7 @@ string Triple<NT>::toString(char tvar, char svar) {
     string s;
     oss<<"( "<<tvar<<"^"<<tdeg<<" * "<<svar<<"^"<<sdeg<<" )*["<<coeffbipoly.toString()<<"]";
     s=oss.str();
-    return s;  
+    return s;
 }//toString(Triple,t,s)
 #endif /* Triple_h */
+

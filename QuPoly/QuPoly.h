@@ -6,6 +6,7 @@
 //  Copyright © 2018 兆吉 王. All rights reserved.
 //
 
+
 #ifndef QuPoly_h
 #define QuPoly_h
 
@@ -44,7 +45,7 @@ QuPoly<NT>::QuPoly(){
 template <class NT>
 QuPoly<NT>::QuPoly(const string & str){
     BiPoly<NT> Sample(str, 't', 's');
-// detailly, API use 'x' replacing 't' and ust 'y' replacing 's'
+    // detailly, API use 'x' replacing 't' and ust 'y' replacing 's'
     sdeg= Sample.getYdegree();
     
     Polynomial<NT> current_poly;
