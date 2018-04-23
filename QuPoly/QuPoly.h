@@ -25,28 +25,31 @@ private:
     
 public:
     vector<Triple<NT>> index;
-    int sdeg;
-    int tdeg;
+    
     QuPoly();
     QuPoly(const string & str);
-    
+    QuPoly(QuPoly<NT> const &temp);
     string toString(char tvar='t', char svar='s');
-    
-    
-    
-    
-    
+    QuPoly<NT> differX();
+    QuPoly<NT> differY();
 };
 
 template <class NT>
 QuPoly<NT>::QuPoly(){
+    Triple<NT> zero;
+    index.push_back(zero);
 }
+
+template <class NT>
+QuPoly<NT>::QuPoly(QuPoly<NT> const &temp){
+    index= temp.index;
+}//copy costructor
 
 template <class NT>
 QuPoly<NT>::QuPoly(const string & str){
     BiPoly<NT> Sample(str, 't', 's');
     // detailly, API use 'x' replacing 't' and ust 'y' replacing 's'
-    sdeg= Sample.getYdegree();
+    int sdeg= Sample.getYdegree();
     
     Polynomial<NT> current_poly;
     for(int i=0;i<= sdeg;i++)
@@ -82,4 +85,81 @@ string QuPoly<NT>::toString(char tvar, char svar) {
     s=oss.str();
     return s;
 }//toString(Qupoly,t,s)
+
+
+template <class NT>
+QuPoly<NT> QuPoly<NT>::differX(){
+    QuPoly<NT> DifferX;
+    for(int i=0; i < int(index.size()) ; i++)
+    {
+        Triple<NT> temp(index[i]);
+        DifferX.index.push_back(temp.differX_triple());
+    }
+//simplify
+    vector<int> A;
+    for(int i=0; i< int(DifferX.index.size());i++)
+    {
+        if(DifferX.index[i].coeffbipoly.getXdegree()==-1 && DifferX.index[i].coeffbipoly.getTrueYdegree()==-1)
+        {
+            A.push_back(i);
+        }
+    }
+    for(int i=0; i< int(A.size()); i++)
+    {
+        DifferX.index.erase(DifferX.index.begin() + A[i] -i );
+    }
+    if(DifferX.index.size()==0)
+    {
+        Triple<NT> zero;
+        DifferX.index.push_back(zero);
+    }
+    
+    return DifferX;
+}//differX()
+
+template <class NT>
+QuPoly<NT> QuPoly<NT>::differY(){
+    QuPoly<NT> DifferY;
+    for(int i=0; i < int(index.size()) ; i++)
+    {
+        Triple<NT> temp(index[i]);
+        DifferY.index.push_back(temp.differY_triple());
+    }
+//simplify
+    vector<int> A;
+    for(int i=0; i< int(DifferY.index.size());i++)
+    {
+        if(DifferY.index[i].coeffbipoly.getXdegree()==-1 && DifferY.index[i].coeffbipoly.getTrueYdegree()==-1)
+        {
+            A.push_back(i);
+        }
+    }
+    for(int i=0; i< int(A.size()); i++)
+    {
+        DifferY.index.erase(DifferY.index.begin() + A[i] -i );
+    }
+    if(DifferY.index.size()==0)
+    {
+        Triple<NT> zero;
+        DifferY.index.push_back(zero);
+    }
+    return DifferY;
+}//differY()
+
+
+
+template <class NT>
+QuPoly<NT> operator*(const QuPoly<NT>& P, const QuPoly<NT>& Q)
+{
+    vector<Triple<NT>> product;
+    for(int i=0; i< int(P.index.size());i++)
+    {
+        for(int j=0; j< int(Q.index.size());j++)
+        {
+            product.push_back(P.index[i]*Q.index[j]);
+        }
+    }
+    
+}
+
 #endif /* QuPoly_h */
