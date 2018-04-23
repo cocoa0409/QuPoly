@@ -27,11 +27,14 @@ public:
     vector<Triple<NT>> index;
     
     QuPoly();
+    QuPoly(const vector<Triple<NT>> & index);
     QuPoly(const string & str);
     QuPoly(QuPoly<NT> const &temp);
     string toString(char tvar='t', char svar='s');
     QuPoly<NT> differX();
     QuPoly<NT> differY();
+    QuPoly<NT> contract();
+    
 };
 
 template <class NT>
@@ -39,6 +42,12 @@ QuPoly<NT>::QuPoly(){
     Triple<NT> zero;
     index.push_back(zero);
 }
+
+template <class NT>
+QuPoly<NT>::QuPoly(const vector<Triple<NT>> & index_ori){
+    index=index_ori;
+}
+
 
 template <class NT>
 QuPoly<NT>::QuPoly(QuPoly<NT> const &temp){
@@ -63,7 +72,6 @@ QuPoly<NT>::QuPoly(const string & str){
                 Triple<NT> current_triple(j,i);
                 index.push_back(current_triple);
             }
-            
         }
     }
 }//QuPoly(const string & str)
@@ -147,6 +155,35 @@ QuPoly<NT> QuPoly<NT>::differY(){
 }//differY()
 
 
+template <class NT>
+QuPoly<NT> QuPoly<NT>::contract(){
+    int i,j,k;
+    vector<int> vec_i;
+    
+    for(i=0; i<int(index.size())-1; i++)
+    {
+        for(j=i+1;j<int(index.size());j++)
+        {
+            if((index[i].sdeg==index[j].sdeg) &&(index[i].tdeg==index[j].tdeg) )
+            {
+                vec_i.push_back(j);
+            }
+        }
+        
+        for(k=0; k< int(vec_i.size()); k++)
+        {
+            index[i]= index[i]+ index[vec_i[k] -k];
+            index.erase(index.begin() + vec_i[k] -k );
+        }
+        vec_i.clear();
+    }
+    return *this;
+}//contract(): Dealing with the product of QuPoly.
+
+
+
+
+
 
 template <class NT>
 QuPoly<NT> operator*(const QuPoly<NT>& P, const QuPoly<NT>& Q)
@@ -159,7 +196,64 @@ QuPoly<NT> operator*(const QuPoly<NT>& P, const QuPoly<NT>& Q)
             product.push_back(P.index[i]*Q.index[j]);
         }
     }
+    QuPoly<NT> Product(product);
+    Product.contract();
     
+    if(int(Product.index.size())==0){
+        QuPoly<NT> zero;
+        return zero;
+    }
+    
+    return Product;
+}// reload *
+
+template <class NT>
+QuPoly<NT> operator+(const QuPoly<NT>& P, const QuPoly<NT>& Q)
+{
+    vector<Triple<NT>> sum;
+    for(int i=0; i< int(P.index.size());i++)
+    {
+        sum.push_back(P.index[i]);
+    }
+    for(int i=0; i< int(Q.index.size());i++)
+    {
+        sum.push_back(Q.index[i]);
+    }
+    QuPoly<NT> Sum(sum);
+    Sum.contract();
+    
+    if(int(Sum.index.size())==0){
+        QuPoly<NT> zero;
+        return zero;
+    }
+    
+    return Sum;
 }
+
+template <class NT>
+QuPoly<NT> operator-(const QuPoly<NT>& P, const QuPoly<NT>& Q)
+{
+    vector<Triple<NT>> dif;
+    for(int i=0; i< int(P.index.size());i++)
+    {
+        dif.push_back(P.index[i]);
+    }
+    for(int i=0; i< int(Q.index.size());i++)
+    {
+        Triple<NT> Qindex=Q.index[i];
+        Triple<NT> temp = Qindex.inverse();
+        dif.push_back(temp);
+    }
+    QuPoly<NT> Dif(dif);
+    Dif.contract();
+    
+    if(int(Dif.index.size())==0){
+        QuPoly<NT> zero;
+        return zero;
+    }
+    return Dif;
+}
+
+
 
 #endif /* QuPoly_h */

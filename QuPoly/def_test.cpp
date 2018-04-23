@@ -30,7 +30,7 @@ int main(){
 
 
     using namespace std;
- /*
+ 
     string a;
     cin>>a;
     QuPoly<Expr> A(a);
@@ -39,22 +39,23 @@ int main(){
     cout<<"dy:"<<A.differY().toString()<<endl;
     cout<<"dx:"<<A.differX().toString()<<endl;
   
- 
-  
-  BiPoly<Expr> A("x+y");
-  BiPoly<Expr> B("y");
-  
-  cout<<(A*B).toString();
-
-    */
+    cin>>a;
+    QuPoly<Expr> B(a);
     
-    BiPoly<Expr> A("x+y");
-    BiPoly<Expr> B("y");
+    cout<<B.toString()<<endl;
+    cout<<(A-B).toString();
 
-    Triple<Expr> A1(2,3,A);
+    
+   /*
+    BiPoly<Expr> A("x^2y+y");
+    BiPoly<Expr> B("y^2");
+
+    Triple<Expr> A1(4,17,A);
     Triple<Expr> B2(4,17,B);
-    cout<<(A1*B2).toString()<<endl;
+    cout<<(A1-B2).toString()<<endl;
+     */
     
+
 
  }
 
