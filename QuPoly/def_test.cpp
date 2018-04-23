@@ -29,22 +29,6 @@
 int main(){
 
 
-    using namespace std;
- 
-    string a;
-    cin>>a;
-    QuPoly<Expr> A(a);
-    
-    cout<<A.toString()<<endl;
-    cout<<"dy:"<<A.differY().toString()<<endl;
-    cout<<"dx:"<<A.differX().toString()<<endl;
-  
-    cin>>a;
-    QuPoly<Expr> B(a);
-    
-    cout<<B.toString()<<endl;
-    cout<<(A-B).toString();
-
     
    /*
     BiPoly<Expr> A("x^2y+y");

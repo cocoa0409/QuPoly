@@ -42,8 +42,8 @@ public:
     
     
     MKPred();
-    MKPred(const Curve<NT> &fxy,
-           const Curve<NT> &gxy, const NT &min_size,const unsigned int max_gen_id);
+    MKPred(const QuPoly<NT> &fxy,
+           const QuPoly<NT> &gxy, const NT &min_size,const unsigned int max_gen_id);
     
 
 };
@@ -64,13 +64,13 @@ MKPred<NT>::MKPred():min_size_(1), max_gen_id_(1000){
 
 
 template <class NT>
-MKPred<NT>::MKPred(const Curve<NT> &fxy,
-       const Curve<NT> &gxy, const NT &min_size,const unsigned int max_gen_id) : fxy_(fxy), gxy_(gxy), min_size_(min_size), max_gen_id_(max_gen_id){
+MKPred<NT>::MKPred(const QuPoly<NT> &fxy,
+       const QuPoly<NT> &gxy, const NT &min_size,const unsigned int max_gen_id) : fxy_(fxy), gxy_(gxy), min_size_(min_size), max_gen_id_(max_gen_id){
     dfxy_dx=fxy_.differX();
     dfxy_dy=fxy_.differY();
     dgxy_dx=gxy_.differX();
     dgxy_dy=gxy_.differY();
-    jacobian=dfxy_dx * dgxy_dy - dfxy_dy * dgxy_dx;
+    jacobian=(dfxy_dx * dgxy_dy) - (dfxy_dy * dgxy_dx);
 }
 
 
