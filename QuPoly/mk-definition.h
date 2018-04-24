@@ -44,7 +44,8 @@ public:
     MKPred();
     MKPred(const QuPoly<NT> &fxy,
            const QuPoly<NT> &gxy, const NT &min_size,const unsigned int max_gen_id);
-    
+    bool Test1(BoxT<NT> &para_box, BoxT<NT> &var_box);
+    bool Test2(BoxT<NT> &para_box, BoxT<NT> &var_box);
 
 };
 
@@ -73,6 +74,32 @@ MKPred<NT>::MKPred(const QuPoly<NT> &fxy,
     jacobian=(dfxy_dx * dgxy_dy) - (dfxy_dy * dgxy_dx);
 }
 
+template <class NT>
+bool MKPred<NT>::Test1(BoxT<NT> &para_box,BoxT<NT> &var_box)
+{
+    IntervalNT &x_range = var_box.x_range;
+    IntervalNT &y_range = var_box.y_range;
+    NT &x_l = x_range.getL();
+    NT &x_r = x_range.getR();
+    NT &y_l = y_range.getL();
+    NT &y_r = y_range.getR();
+    NT &x_mid = x_range.mid();
+    NT &y_mid = y_range.mid();
+//compute the jacobian at x_mid,y_mid -> a bipoly of s and t. but could still use
+    //datastruct QuPoly representing.
+    
+    NT j00=dfxy_dx.eval(para_box,var_box);
+}
+
+
+template <class NT>
+bool MKPred<NT>::Test2(BoxT<NT> &para_box, BoxT<NT> &var_box)
+{
+    if(( fxy_.eval(para_box,var_box).zero() == 0 )||( gxy_.eval(para_box,var_box).zero() == 0 ))
+        return true;
+    else
+        return false;
+}
 
 
 #endif /* mk_definition_h */

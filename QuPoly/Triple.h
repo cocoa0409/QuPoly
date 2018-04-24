@@ -20,22 +20,22 @@ private:
     
     
 public:
+//members
     int tdeg;
     int sdeg;
     BiPoly<NT> coeffbipoly;
-    
+//constructors
     Triple();
     Triple(Triple<NT> const &temp);
     Triple(int t,int s);
     Triple(int t,int s, BiPoly<NT> & bipoly);
-    
-    
+//methods
     string toString(char tvar='t', char svar='s');
     Triple<NT> differX_triple();
     Triple<NT> differY_triple();
     Triple<NT> inverse();
-    
-    
+    IntervalT<NT> eval(BoxT<NT> & para_box, BoxT<NT> & var_box );
+    Triple<NT> eval_xy(NT & x, NT & y);
 };//end_of_Trple
 
 template <class NT>
@@ -101,6 +101,49 @@ Triple<NT> Triple<NT>::inverse()
     Triple<NT> result(tdeg,sdeg,temp);
     return result;
 }
+
+template <class NT>
+IntervalT<NT> Triple<NT>::eval(BoxT<NT> & para_box, BoxT<NT> & var_box )
+{
+    IntervalT<NT> t_range=para_box.x_range;
+    IntervalT<NT> s_range=para_box.y_range;
+    IntervalT<NT> x_range=var_box.x_range;
+    IntervalT<NT> y_range=var_box.y_range;
+//compute bipoly
+    IntervalT<NT> xy_result=coeffbipoly.eval(x_range, y_range);
+    IntervalT<NT> t_result(1),s_result(1);
+//compute t
+    for(int i=0;i<tdeg;i++){
+        t_result *= t_range;}
+//compute s
+    for(int i=0;i<sdeg;i++){
+        s_result *= s_range;}
+    if(sdeg%2==0 && tdeg%2==0){
+        IntervalT<NT> s_revised(0,s_result.getR());
+        IntervalT<NT> t_revised(0,t_result.getR());
+        return s_revised * t_revised * xy_result;
+    }
+    else
+        return s_result * t_result * xy_result;
+}
+
+
+
+template <class NT>
+Triple<NT> Triple<NT>::eval_xy( NT & x, NT & y )
+{
+    IntervalT<NT> X(x,x ),Y( y,y );
+    NT R(coeffbipoly.eval(X,Y).getR()),L(coeffbipoly.eval(X,Y).getL());
+    assert(R==L);
+    if(R<1e-16&& R>-(1e-16))
+        R=NT(0);
+    BiPoly<NT> eval_poly(R);
+    Triple<NT> result(tdeg,sdeg,eval_poly);
+    return result;
+}
+
+
+
 
 
 

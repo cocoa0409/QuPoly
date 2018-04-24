@@ -24,17 +24,21 @@ class QuPoly{
 private:
     
 public:
+//member
     vector<Triple<NT>> index;
-    
+//constructors
     QuPoly();
     QuPoly(const vector<Triple<NT>> & index);
     QuPoly(const string & str);
     QuPoly(QuPoly<NT> const &temp);
+//methods
     string toString(char tvar='t', char svar='s');
     QuPoly<NT> differX();
     QuPoly<NT> differY();
     QuPoly<NT> contract();
-    
+    QuPoly<NT> clear();
+    IntervalT<NT> eval(BoxT<NT> & para_box, BoxT<NT> & var_box );
+    QuPoly<NT> eval_xy(NT x, NT y);
 };
 
 template <class NT>
@@ -104,6 +108,7 @@ QuPoly<NT> QuPoly<NT>::differX(){
         DifferX.index.push_back(temp.differX_triple());
     }
 //simplify
+    /*
     vector<int> A;
     for(int i=0; i< int(DifferX.index.size());i++)
     {
@@ -121,6 +126,8 @@ QuPoly<NT> QuPoly<NT>::differX(){
         Triple<NT> zero;
         DifferX.index.push_back(zero);
     }
+     */
+    DifferX.clear();
     
     return DifferX;
 }//differX()
@@ -134,6 +141,7 @@ QuPoly<NT> QuPoly<NT>::differY(){
         DifferY.index.push_back(temp.differY_triple());
     }
 //simplify
+        /*
     vector<int> A;
     for(int i=0; i< int(DifferY.index.size());i++)
     {
@@ -150,7 +158,8 @@ QuPoly<NT> QuPoly<NT>::differY(){
     {
         Triple<NT> zero;
         DifferY.index.push_back(zero);
-    }
+    }*/
+    DifferY.clear();
     return DifferY;
 }//differY()
 
@@ -178,7 +187,64 @@ QuPoly<NT> QuPoly<NT>::contract(){
         vec_i.clear();
     }
     return *this;
-}//contract(): Dealing with the product of QuPoly.
+}//contract(): 压缩相同项.
+
+
+template <class NT>
+QuPoly<NT> QuPoly<NT>::clear()
+{
+    for(int i=0;i<int(index.size());i++)
+    {
+        if(index[i].coeffbipoly.getXdegree()==-1 && index[i].coeffbipoly.getTrueYdegree()==-1)
+        {
+            index.erase(index.begin()+i);
+            i=i-1;
+        }
+    }
+    if(index.size()==0)
+    {
+        Triple<NT> zero;
+        index.push_back(zero);
+    }
+    return *this;
+}//clear():清理xy系数为0的项
+
+
+
+
+template <class NT>
+IntervalT<NT> QuPoly<NT>::eval(BoxT<NT> & para_box, BoxT<NT> & var_box )
+{
+    IntervalT<NT> result;
+    for(int i=0;i<int(index.size());i++)
+    {
+        result=result+index[i].eval(para_box,var_box);
+    }
+    return result;
+}//eval
+
+template <class NT>
+QuPoly<NT> QuPoly<NT>::eval_xy(NT x, NT y)
+{
+    vector<Triple<NT>> vec_index;
+    for(int i=0;i<int(index.size());i++)
+    {
+        vec_index.push_back(index[i].eval_xy(x,y));
+    }
+    QuPoly<NT> result(vec_index);
+    result.clear();
+    return result;
+}//eval_xy
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -198,11 +264,7 @@ QuPoly<NT> operator*(const QuPoly<NT>& P, const QuPoly<NT>& Q)
     }
     QuPoly<NT> Product(product);
     Product.contract();
-    
-    if(int(Product.index.size())==0){
-        QuPoly<NT> zero;
-        return zero;
-    }
+    Product.clear();
     
     return Product;
 }// reload *
@@ -221,12 +283,7 @@ QuPoly<NT> operator+(const QuPoly<NT>& P, const QuPoly<NT>& Q)
     }
     QuPoly<NT> Sum(sum);
     Sum.contract();
-    
-    if(int(Sum.index.size())==0){
-        QuPoly<NT> zero;
-        return zero;
-    }
-    
+    Sum.clear();
     return Sum;
 }
 
@@ -246,11 +303,7 @@ QuPoly<NT> operator-(const QuPoly<NT>& P, const QuPoly<NT>& Q)
     }
     QuPoly<NT> Dif(dif);
     Dif.contract();
-    
-    if(int(Dif.index.size())==0){
-        QuPoly<NT> zero;
-        return zero;
-    }
+    Dif.clear();
     return Dif;
 }
 
