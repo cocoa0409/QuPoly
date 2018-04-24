@@ -18,7 +18,6 @@
 #include "QuPoly.h"
 #include "CORE/CORE.h"
 #include "CORE/IntervalT.h"
-#include "CORE/linearAlgebraT.h"
 
 template <typename NT>
 class MKPred{
@@ -77,18 +76,78 @@ MKPred<NT>::MKPred(const QuPoly<NT> &fxy,
 template <class NT>
 bool MKPred<NT>::Test1(BoxT<NT> &para_box,BoxT<NT> &var_box)
 {
-    IntervalNT &x_range = var_box.x_range;
-    IntervalNT &y_range = var_box.y_range;
-    NT &x_l = x_range.getL();
-    NT &x_r = x_range.getR();
-    NT &y_l = y_range.getL();
-    NT &y_r = y_range.getR();
-    NT &x_mid = x_range.mid();
-    NT &y_mid = y_range.mid();
+    IntervalT<NT> x_range = var_box.x_range;
+    IntervalT<NT> y_range = var_box.y_range;
+    NT x_l = x_range.getL();
+    NT x_r = x_range.getR();
+    NT y_l = y_range.getL();
+    NT y_r = y_range.getR();
+    NT x_mid = x_range.mid();
+    NT y_mid = y_range.mid();
 //compute the jacobian at x_mid,y_mid -> a bipoly of s and t. but could still use
     //datastruct QuPoly representing.
     
-    NT j00=dfxy_dx.eval(para_box,var_box);
+    QuPoly<NT> j00 = dfxy_dx.eval_xy(x_mid, y_mid);
+    QuPoly<NT> j01 = dfxy_dy.eval_xy(x_mid, y_mid);
+    QuPoly<NT> j10 = dgxy_dx.eval_xy(x_mid, y_mid);
+    QuPoly<NT> j11 = dgxy_dy.eval_xy(x_mid, y_mid);
+    
+    QuPoly<NT> Fxy_=fxy_ * j11 - gxy_ * j01;
+    QuPoly<NT> Gxy_=gxy_ * j00 - fxy_ * j10;
+    
+    BoxT<NT> x_l_y(1,x_l,y_range);
+    BoxT<NT> x_r_y(1,x_r,y_range);
+    BoxT<NT> x_y_l(1,x_range,y_l);
+    BoxT<NT> x_y_r(1,x_range,y_r);
+    
+    IntervalT<NT> I_l, I_r, I_u, I_d;
+    I_l=Fxy_.eval(para_box, x_l_y);
+    I_r=Fxy_.eval(para_box, x_r_y);
+    I_d=Gxy_.eval(para_box, x_y_l);
+    I_u=Gxy_.eval(para_box, x_y_r);
+    
+    
+    if (!I_l.zero() && !I_r.zero() && !I_d.zero() && !I_u.zero()) {
+        //        std::cout << "Boundaries have fixed sign "<< std::endl;
+        
+        if (sign(I_l.getR()) *sign(I_r.getR()) < 0 &&
+            sign(I_d.getR()) *sign(I_u.getR()) < 0 )  {
+            //            std::cout <<" MK Test successful " << std::endl;
+            return 1;
+        }else if (sign(I_l.getR()) *sign(I_r.getR()) > 0 ||
+                  sign(I_d.getR()) *sign(I_u.getR()) > 0 ) {
+            return 0;
+        }else {
+            return 0;
+        }
+    }
+    
+    if (!I_l.zero() && !I_r.zero()) {
+        if (sign(I_l.getR())*sign(I_r.getR()) > 0) {
+            return 0;
+        }
+    }
+    
+    if (!I_d.zero() && !I_u.zero()) {
+        if (sign(I_d.getR())*sign(I_u.getR()) > 0) {
+            return 0;
+        }
+    }
+    
+    /*
+     if (sign(I_l.getR()) *sign(I_r.getR()) < 0 &&
+     sign(I_d.getR()) *sign(I_u.getR()) > 0) {
+     return 0;
+     } else if (sign(I_l.getR()) *sign(I_r.getR()) > 0 &&
+     sign(I_d.getR()) *sign(I_u.getR()) < 0) {
+     return 0;
+     }
+     */
+    
+    return 0;
+    
+    
+    
 }
 
 

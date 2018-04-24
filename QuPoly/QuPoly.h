@@ -251,6 +251,16 @@ QuPoly<NT> QuPoly<NT>::eval_xy(NT x, NT y)
 
 
 
+
+
+
+
+
+
+
+
+
+
 template <class NT>
 QuPoly<NT> operator*(const QuPoly<NT>& P, const QuPoly<NT>& Q)
 {
