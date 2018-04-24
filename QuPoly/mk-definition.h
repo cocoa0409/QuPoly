@@ -113,24 +113,32 @@ bool MKPred<NT>::Test1(BoxT<NT> &para_box,BoxT<NT> &var_box)
         if (sign(I_l.getR()) *sign(I_r.getR()) < 0 &&
             sign(I_d.getR()) *sign(I_u.getR()) < 0 )  {
             //            std::cout <<" MK Test successful " << std::endl;
-            return 1;
+            return true;
         }else if (sign(I_l.getR()) *sign(I_r.getR()) > 0 ||
                   sign(I_d.getR()) *sign(I_u.getR()) > 0 ) {
-            return 0;
-        }else {
-            return 0;
+            return false;
+        }
+        else {
+            return false;
         }
     }
     
     if (!I_l.zero() && !I_r.zero()) {
         if (sign(I_l.getR())*sign(I_r.getR()) > 0) {
-            return 0;
+            return false;
         }
     }
     
     if (!I_d.zero() && !I_u.zero()) {
         if (sign(I_d.getR())*sign(I_u.getR()) > 0) {
-            return 0;
+            return false;
+        }
+    }
+    
+   //补充 针对0
+    if ( ( I_r.getR()<=0 && I_l.getL()>=0 ) ||  ( I_r.getL()>=0 && I_l.getR()<=0 ) ){
+        if( ( I_u.getR()<=0 && I_d.getL()>=0 ) ||  ( I_u.getL()>=0 && I_d.getR()<=0 ) ){
+            return true;
         }
     }
     
@@ -144,7 +152,7 @@ bool MKPred<NT>::Test1(BoxT<NT> &para_box,BoxT<NT> &var_box)
      }
      */
     
-    return 0;
+    return false;
     
     
     

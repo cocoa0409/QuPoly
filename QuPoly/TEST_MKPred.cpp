@@ -71,6 +71,7 @@ int main(){
     BoxT<Expr> var_box(1,x,y);
     BoxT<Expr> para_box(1,t,s);
     cout<<"test: Test2(G,F):"<<MKF.Test2(para_box, var_box)<<endl;
+    cout<<"test: Test1(G,F):"<<MKF.Test1(para_box, var_box)<<endl;
     
     
 }
