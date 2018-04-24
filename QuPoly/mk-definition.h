@@ -142,20 +142,7 @@ bool MKPred<NT>::Test1(BoxT<NT> &para_box,BoxT<NT> &var_box)
         }
     }
     
-    /*
-     if (sign(I_l.getR()) *sign(I_r.getR()) < 0 &&
-     sign(I_d.getR()) *sign(I_u.getR()) > 0) {
-     return 0;
-     } else if (sign(I_l.getR()) *sign(I_r.getR()) > 0 &&
-     sign(I_d.getR()) *sign(I_u.getR()) < 0) {
-     return 0;
-     }
-     */
-    
     return false;
-    
-    
-    
 }
 
 

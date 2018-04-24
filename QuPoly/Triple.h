@@ -230,4 +230,5 @@ Polynomial<NT> Polynomial<NT>::mulScalar_nochange ( const NT & c){
 */
 
 
+
 #endif /* Triple_h */

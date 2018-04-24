@@ -66,8 +66,8 @@ int main(){
     MKPred<Expr> MKF(F,G,1,1);
     IntervalT<Expr> x(1,2);
     IntervalT<Expr> y(1,2);
-    IntervalT<Expr> t(0.9,1);
-    IntervalT<Expr> s(0.5,0.6);
+    IntervalT<Expr> t(0.3,1);
+    IntervalT<Expr> s(0.1,0.6);
     BoxT<Expr> var_box(1,x,y);
     BoxT<Expr> para_box(1,t,s);
     cout<<"test: Test2(G,F):"<<MKF.Test2(para_box, var_box)<<endl;
