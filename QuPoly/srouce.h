@@ -103,24 +103,148 @@ void show_box_region(BoxT<NT> * var_box,BoxT<NT> * para_box)
     cout<<" \\ "<<endl;
 }
 
+template <class NT>
+NT box_area(BoxT<NT> var_box){
+    return var_box.width() * var_box.height();
+}
+
+template <class NT>
+NT boxes_area(queue<BoxT<NT>> * boxes_queue)
+{
+    NT result=0;
+    for(int i=0;i<int(boxes_queue->size());i++)
+    {
+        result += box_area(boxes_queue->front());
+        boxes_queue->push(boxes_queue->front());
+        boxes_queue->pop();
+    }
+    return result;
+}
+
+
+template <class NT>
+NT min_box_area(Stack<BoxT<NT>> & stack)
+{
+    /*
+    Stack<BoxT<NT>> boxes_stack=stack;
+    NT result=NT(1000000);
+    NT temp;
+    Expr j=int(boxes_stack.size());
+    for(int i=0;i<j;i++)
+    {
+        temp=box_area(boxes_stack.pop());
+        if(temp < result)
+        {
+            result = temp;
+        }
+    }
+     */
+    return box_area(stack.index[stack.index.size()-1]);
+}
+
+
+
 
 template <class NT>
 void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , queue<BoxT<NT>> * solvable_boxes , queue<BoxT<NT>> * unsolvable_boxes )
 {
     NT beta = 0.01;
-    NT theta= 0.0000000000001;
-    queue<BoxT<NT>> Ppara;
+    NT theta= 0.00000000000001;
+    
+
+    Stack<BoxT<NT>> Svar;
+    int i;
+    bool flag;
+    
 //1
+    queue<BoxT<NT>> Ppara;
     Ppara.push( *var_box );
 //2
-    while(beta < )
-    
-    
-    
-    
-    
-    
+    while( beta < box_area(*para_box)- boxes_area(solvable_boxes)-boxes_area(unsolvable_boxes) )
+    {
+//3
+        BoxT<Expr> * pbar = new BoxT<Expr>(Ppara.front());
+        Ppara.pop();
+//4
+        Svar.clear();
+        Svar.push( *var_box );
+//5
+        flag=false;
+//6
+        while( min_box_area(Svar)> theta )
+        {
+//7
+            BoxT<Expr>* vbar=new BoxT<Expr>(Svar.pop());
+//8
+            if(system.Test1(*pbar, *vbar) == true)
+            {
+//9
+                solvable_boxes->push(*pbar);
+//10
+                flag = true;
+                
+//11
+                delete vbar;
+                break;
+            }
+//12
+            if(system.Test2(*pbar, *vbar) == true )
+            {
+//13
+                if(Svar.size()==0)
+                {
+//14
+                    unsolvable_boxes->push(*pbar);
+//15
+                    flag = true;
+//16
+                    delete vbar;
+                    break;
+                }
+            }
+//17
+            else
+            {
+//18
+                if(vbar->Split(0)==true)
+                {
+                    cout<<"Var::   Split "<<*vbar<<endl;
+                    for(i=0;i<4;i++)
+                    {
+                        Svar.push(*(vbar->pChildren[i]));
+                    }
+                }
+                delete vbar;
+            }
+        }
+//19
+        if( flag == false )
+        {
+//20
+            if(pbar->Split(0)==true)
+            {
+                cout<<"Para::   Split "<<*pbar<<endl;
+                for(i=0;i<4;i++)
+                {
+                    Ppara.push(*(pbar->pChildren[i]));
+                }
+            }
+            delete pbar;
+        }
+    }
 }
+
+
+template <class NT>
+void Output_area(queue<BoxT<NT>> * solvable_boxes, queue<BoxT<NT>> * unsolvable_boxes )
+{
+    cout<<"   &&&&&  Result  &&&&&   "<<endl;
+    cout<<" / "<<endl;
+    cout<<"| sovlable boxes total: "<<boxes_area(solvable_boxes)<<endl;
+    cout<<"| unsolvable boxes total : "<<boxes_area(unsolvable_boxes)<<endl;
+    cout<<" \\ "<<endl;
+}
+
 
 
 #endif /* srouce_h */

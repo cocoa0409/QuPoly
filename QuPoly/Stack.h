@@ -27,6 +27,7 @@ public:
     void push(NT element);
     NT pop();
     int size();
+    void clear();
 };
 
 template <class NT>
@@ -37,7 +38,10 @@ Stack<NT>::Stack(){
 
 template <class NT>
 Stack<NT>::Stack(Stack<NT> & copy){
-    index=copy.index;
+    for(int i=0;i<int(copy.index.size());i++)
+    {
+        index.push_back(copy.index[i]);
+    }
 }
 
 
@@ -57,4 +61,10 @@ template <class NT>
 int Stack<NT>::size(){
     return int(index.size());
 }
+template <class NT>
+void Stack<NT>::clear(){
+    index.clear();
+}
+
+
 #endif /* Stack_h */
