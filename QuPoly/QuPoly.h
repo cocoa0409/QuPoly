@@ -72,7 +72,7 @@ QuPoly<NT>::QuPoly(const string & str){
         {
             NT current_coef=current_poly.getCoeff(j);
             if(current_coef!=NT(0)){
-                cout<<"coef(s="<<i<<",t="<<j<<")!"<<endl;
+                cout<<"  Input the coefficient BiPoly (x,y) of ( s = "<<i<<" , t = "<<j<<" ) term:|  ";
                 Triple<NT> current_triple(j,i);
                 index.push_back(current_triple);
             }

@@ -13,23 +13,48 @@
 #include <CORE/poly/Curves.h>
 #include <box.h>
 #include <queue>
-using namespace std
+using namespace std;
 
 
 template <class NT>
 class Stack{
 public:
 //member
-    
     vector<NT> index;
 //methods
-    
-    
-    
-    
-    
+    Stack();
+    Stack(Stack<NT> & copy);
+    void push(NT element);
+    NT pop();
+    int size();
+};
 
+template <class NT>
+Stack<NT>::Stack(){
+    index.clear();
 }
 
 
+template <class NT>
+Stack<NT>::Stack(Stack<NT> & copy){
+    index=copy.index;
+}
+
+
+
+template <class NT>
+void Stack<NT>::push(NT element){
+    index.push_back(element);
+}
+
+template <class NT>
+NT Stack<NT>::pop(){
+    NT result=index[int(index.size())-1];
+    index.pop_back();
+    return result;
+}
+template <class NT>
+int Stack<NT>::size(){
+    return int(index.size());
+}
 #endif /* Stack_h */

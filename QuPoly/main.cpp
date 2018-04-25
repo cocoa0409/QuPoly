@@ -18,8 +18,33 @@
 #include "QuPoly.h"
 #include "mk-definition.h"
 #include "Stack.h"
+#include "srouce.h"
 
 int main(){
+    /*
+    MKPred<Expr> system = input_QuPoly_system<Expr>();
+    BoxT<Expr> * var_box= input_box_region<Expr>("varible");
+    BoxT<Expr> * para_box= input_box_region<Expr>("parameter");
+    show_QuPoly_system(system);
+    show_box_region(var_box,para_box);
+    delete var_box;
+    delete para_box;
+
     
+    queue<BoxT<Expr>> * solvable_boxes = new queue<BoxT<Expr>>;
+    queue<BoxT<Expr>> * unsovable_boxes = new queue<BoxT<Expr>>;
+    
+    
+    delete solvable_boxes;
+    delete unsovable_boxes;
+     */
+    queue<Expr> A;
+    Expr b=1;
+    Expr * pointer = new Expr;
+    *pointer=b;
+    A.push(*pointer);
+    cout<<A.front();
+    delete pointer;
+    cout<<A.front();
     
 }

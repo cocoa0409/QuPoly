@@ -56,7 +56,7 @@ template <class NT>
 Triple<NT>::Triple(int t,int s){
     tdeg=t;
     sdeg=s;
-    cout<<"(t="<<t<<",s="<<s<<"):Input the coeff_BiPoly(x,y)"<<endl;
+//    cout<<"(t="<<t<<",s="<<s<<"):Input the coeff_BiPoly(x,y)"<<endl;
     string bipoly;
     cin>>bipoly;
     BiPoly<NT> coeffbipoly_mid(bipoly);

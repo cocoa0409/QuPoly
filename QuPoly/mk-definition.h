@@ -32,17 +32,13 @@ public:
     QuPoly<NT>           dgxy_dx;       // dg(x, y)/dx
     QuPoly<NT>           dgxy_dy;       // dg(x, y)/dy
     QuPoly<NT>              jacobian;    // the detrminant of jacobian_ matrix
-    const NT            min_size_;  // minimum size of a box
-//const NT            max_size_;  // if output box greater that max, keep splitting
-    const unsigned int max_gen_id_;// box generation
-    
     
     
     
     
     MKPred();
     MKPred(const QuPoly<NT> &fxy,
-           const QuPoly<NT> &gxy, const NT &min_size,const unsigned int max_gen_id);
+           const QuPoly<NT> &gxy);
     bool Test1(BoxT<NT> &para_box, BoxT<NT> &var_box);
     bool Test2(BoxT<NT> &para_box, BoxT<NT> &var_box);
 
@@ -51,7 +47,7 @@ public:
 
 
 template <class NT>
-MKPred<NT>::MKPred():min_size_(1), max_gen_id_(1000){
+MKPred<NT>::MKPred(){
     QuPoly<NT> zero;
     fxy_=zero;
     gxy_=zero;
@@ -65,7 +61,7 @@ MKPred<NT>::MKPred():min_size_(1), max_gen_id_(1000){
 
 template <class NT>
 MKPred<NT>::MKPred(const QuPoly<NT> &fxy,
-       const QuPoly<NT> &gxy, const NT &min_size,const unsigned int max_gen_id) : fxy_(fxy), gxy_(gxy), min_size_(min_size), max_gen_id_(max_gen_id){
+       const QuPoly<NT> &gxy) : fxy_(fxy), gxy_(gxy){
     dfxy_dx=fxy_.differX();
     dfxy_dy=fxy_.differY();
     dgxy_dx=gxy_.differX();
