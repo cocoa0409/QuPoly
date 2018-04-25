@@ -34,29 +34,11 @@ int main(){
     
     
     Algorithm(system, var_box, para_box, solvable_boxes, unsolvable_boxes);
-    Output_area(solvable_boxes, unsolvable_boxes );
+    Output_area(para_box,solvable_boxes, unsolvable_boxes );
     
     
     delete var_box;
     delete para_box;
     delete solvable_boxes;
     delete unsolvable_boxes;
-     
-  /*
-    Stack<BoxT<Expr>> A;
-    IntervalT<Expr> x(1,2);
-    IntervalT<Expr> y(1,2);
-    IntervalT<Expr> t(0.3,1);
-    IntervalT<Expr> s(0.1,0.6);
-    BoxT<Expr> var_box(1,x,y);
-    BoxT<Expr> para_box(1,t,s);
-    A.push(var_box);
-    A.push(para_box);
-    cout<<box_area(var_box)<<endl<<box_area(para_box)<<endl;
-    cout<<min_box_area(A);
-    cout<<A.size();
-    Stack<BoxT<Expr>> A1=A;
-
-
-*/
 }

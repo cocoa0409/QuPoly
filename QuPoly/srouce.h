@@ -91,21 +91,23 @@ void show_QuPoly_system(MKPred<NT> & system)
     cout<<"| "<<system.fxy_.toString()<<" = 0"<<endl;
     cout<<"| "<<system.gxy_.toString()<<" = 0"<<endl;
     cout<<" \\ "<<endl;
+    cout<<endl<<"   &&&&& QuPoly system &&&&&   "<<endl;
 }
 
 template <class NT>
 void show_box_region(BoxT<NT> * var_box,BoxT<NT> * para_box)
 {
-    cout<<"   &&&&&  Box  region  &&&&&   "<<endl;
+    cout<<endl <<"   &&&&&  Box  region  &&&&&   "<<endl;
     cout<<" / "<<endl;
-    cout<<"| varible box: (x,y) in"<<*var_box<<endl;
-    cout<<"| parameter box: (t,s) in"<<*para_box<<endl;
+    cout<<"| varible box: (x,y) in "<<*var_box<<endl;
+    cout<<"| parameter box: (t,s) in "<<*para_box<<endl;
     cout<<" \\ "<<endl;
+    cout<<"   &&&&&  Box  region  &&&&&   "<<endl<<endl;
 }
 
 template <class NT>
 NT box_area(BoxT<NT> var_box){
-    return var_box.width() * var_box.height();
+    return (var_box.width() * var_box.height());
 }
 
 template <class NT>
@@ -148,19 +150,20 @@ NT min_box_area(Stack<BoxT<NT>> & stack)
 template <class NT>
 void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , queue<BoxT<NT>> * solvable_boxes , queue<BoxT<NT>> * unsolvable_boxes )
 {
-    NT beta = 0.01;
-    NT theta= 0.00000000000001;
+    NT beta = 0.47;
+    NT theta= 0.000000000000000000000000000000000000000000001;
     
 
     Stack<BoxT<NT>> Svar;
     int i;
     bool flag;
+    NT total_area=box_area(*para_box);
     
 //1
     queue<BoxT<NT>> Ppara;
-    Ppara.push( *var_box );
+    Ppara.push( *para_box );
 //2
-    while( beta < box_area(*para_box)- boxes_area(solvable_boxes)-boxes_area(unsolvable_boxes) )
+    while( beta > (boxes_area(solvable_boxes)+boxes_area(unsolvable_boxes))/total_area )
     {
 //3
         BoxT<Expr> * pbar = new BoxT<Expr>(Ppara.front());
@@ -180,6 +183,9 @@ void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , qu
             {
 //9
                 solvable_boxes->push(*pbar);
+                cout<<"---- push "<<*pbar<<" to solvable queue."<<endl;
+                cout<<"-------- Now : "<<boxes_area(solvable_boxes)*100/total_area<<"% solvable"<<endl;
+                cout<<"-------- Now : "<<boxes_area(unsolvable_boxes)*100/total_area<<"% unsolvable"<<endl;
 //10
                 flag = true;
                 
@@ -195,6 +201,9 @@ void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , qu
                 {
 //14
                     unsolvable_boxes->push(*pbar);
+                    cout<<"---- push "<<*pbar<<" to unsolvable queue."<<endl;
+                    cout<<"-------- Now : "<<boxes_area(solvable_boxes)*100/total_area<<"% solvable"<<endl;
+                    cout<<"-------- Now : "<<boxes_area(unsolvable_boxes)*100/total_area<<"% unsolvable"<<endl;
 //15
                     flag = true;
 //16
@@ -208,7 +217,7 @@ void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , qu
 //18
                 if(vbar->Split(0)==true)
                 {
-                    cout<<"Var::   Split "<<*vbar<<endl;
+      //              cout<<"Var::   Split "<<*vbar<<endl;
                     for(i=0;i<4;i++)
                     {
                         Svar.push(*(vbar->pChildren[i]));
@@ -229,22 +238,22 @@ void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , qu
                     Ppara.push(*(pbar->pChildren[i]));
                 }
             }
-            delete pbar;
         }
+        delete pbar;
     }
 }
 
 
 template <class NT>
-void Output_area(queue<BoxT<NT>> * solvable_boxes, queue<BoxT<NT>> * unsolvable_boxes )
+void Output_area(BoxT<NT> * para_box, queue<BoxT<NT>> * solvable_boxes, queue<BoxT<NT>> * unsolvable_boxes )
 {
+    
+    NT total_area=box_area(*para_box);
     cout<<"   &&&&&  Result  &&&&&   "<<endl;
     cout<<" / "<<endl;
-    cout<<"| sovlable boxes total: "<<boxes_area(solvable_boxes)<<endl;
-    cout<<"| unsolvable boxes total : "<<boxes_area(unsolvable_boxes)<<endl;
+    cout<<"| sovlable boxes total: "<<boxes_area(solvable_boxes)*100/total_area<<endl;
+    cout<<"| unsolvable boxes total : "<<boxes_area(unsolvable_boxes)*100/total_area<<endl;
     cout<<" \\ "<<endl;
+    cout<<"   &&&&&  Result  &&&&&   "<<endl;
 }
-
-
-
 #endif /* srouce_h */
