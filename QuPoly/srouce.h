@@ -150,8 +150,10 @@ NT min_box_area(Stack<BoxT<NT>> & stack)
 template <class NT>
 void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , queue<BoxT<NT>> * solvable_boxes , queue<BoxT<NT>> * unsolvable_boxes )
 {
-    NT beta = 0.47;
-    NT theta= 0.000000000000000000000000000000000000000000001;
+    
+    ofstream mycout("temp.txt");
+    NT beta = 0.99;
+    NT theta= 0.000000000000000000000000000000000000000000000000000000000000000000000000001;
     
 
     Stack<BoxT<NT>> Svar;
@@ -181,9 +183,11 @@ void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , qu
 //8
             if(system.Test1(*pbar, *vbar) == true)
             {
+                
 //9
                 solvable_boxes->push(*pbar);
                 cout<<"---- push "<<*pbar<<" to solvable queue."<<endl;
+                mycout<<"---- push "<<*pbar<<" to solvable queue."<<endl;
                 cout<<"-------- Now : "<<boxes_area(solvable_boxes)*100/total_area<<"% solvable"<<endl;
                 cout<<"-------- Now : "<<boxes_area(unsolvable_boxes)*100/total_area<<"% unsolvable"<<endl;
 //10
@@ -202,6 +206,7 @@ void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , qu
 //14
                     unsolvable_boxes->push(*pbar);
                     cout<<"---- push "<<*pbar<<" to unsolvable queue."<<endl;
+                    mycout<<"---- push "<<*pbar<<" to unsolvable queue."<<endl;
                     cout<<"-------- Now : "<<boxes_area(solvable_boxes)*100/total_area<<"% solvable"<<endl;
                     cout<<"-------- Now : "<<boxes_area(unsolvable_boxes)*100/total_area<<"% unsolvable"<<endl;
 //15
@@ -241,6 +246,7 @@ void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , qu
         }
         delete pbar;
     }
+    mycout.close();
 }
 
 

@@ -110,7 +110,7 @@ IntervalT<NT> Triple<NT>::eval(BoxT<NT> & para_box, BoxT<NT> & var_box )
     IntervalT<NT> x_range=var_box.x_range;
     IntervalT<NT> y_range=var_box.y_range;
 //compute bipoly
-    IntervalT<NT> xy_result=coeffbipoly.eval(x_range, y_range);
+    IntervalT<NT> xy_result=coeffbipoly.eval2(x_range, y_range);
     IntervalT<NT> t_result(1),s_result(1);
 //compute t
     for(int i=0;i<tdeg;i++){
