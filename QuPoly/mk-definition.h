@@ -33,9 +33,6 @@ public:
     QuPoly<NT>           dgxy_dy;       // dg(x, y)/dy
     QuPoly<NT>              jacobian;    // the detrminant of jacobian_ matrix
     
-    
-    
-    
     MKPred();
     MKPred(const QuPoly<NT> &fxy,
            const QuPoly<NT> &gxy);
@@ -45,7 +42,7 @@ public:
 };
 
 
-
+//initialization
 template <class NT>
 MKPred<NT>::MKPred(){
     QuPoly<NT> zero;
@@ -58,7 +55,7 @@ MKPred<NT>::MKPred(){
     jacobian=zero;
 }
 
-
+//derivation and compute jacobian by input qupoly system
 template <class NT>
 MKPred<NT>::MKPred(const QuPoly<NT> &fxy,
        const QuPoly<NT> &gxy) : fxy_(fxy), gxy_(gxy){
@@ -69,6 +66,11 @@ MKPred<NT>::MKPred(const QuPoly<NT> &fxy,
     jacobian=(dfxy_dx * dgxy_dy) - (dfxy_dy * dgxy_dx);
 }
 
+
+
+//Test 1
+// return True: pass, always solvable parameter box (BoxT<NT> &para_box)
+// return False: nothing to conclude
 template <class NT>
 bool MKPred<NT>::Test1(BoxT<NT> &para_box,BoxT<NT> &var_box)
 {
@@ -81,7 +83,7 @@ bool MKPred<NT>::Test1(BoxT<NT> &para_box,BoxT<NT> &var_box)
     NT x_mid = x_range.mid();
     NT y_mid = y_range.mid();
 //compute the jacobian at x_mid,y_mid -> a bipoly of s and t. but could still use
-    //datastruct QuPoly representing.
+    //datastruct QuPoly to represent.
     
     QuPoly<NT> j00 = dfxy_dx.eval_xy(x_mid, y_mid);
     QuPoly<NT> j01 = dfxy_dy.eval_xy(x_mid, y_mid);
@@ -141,7 +143,9 @@ bool MKPred<NT>::Test1(BoxT<NT> &para_box,BoxT<NT> &var_box)
     return false;
 }
 
-
+//Test 2
+// return True: pass, always unsolvable parameter box (BoxT<NT> &para_box)
+// return False: nothing to conclude
 template <class NT>
 bool MKPred<NT>::Test2(BoxT<NT> &para_box, BoxT<NT> &var_box)
 {

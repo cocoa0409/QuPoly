@@ -15,7 +15,7 @@
 #include <box.h>
 #include <queue>
 #include "Triple.h"
-
+#include <fstream>
 using namespace std;
 
 
@@ -30,6 +30,7 @@ public:
     QuPoly();
     QuPoly(const vector<Triple<NT>> & index);
     QuPoly(const string & str);
+    QuPoly(const string & str, ifstream & file);
     QuPoly(QuPoly<NT> const &temp);
 //methods
     string toString(char tvar='t', char svar='s');
@@ -61,7 +62,7 @@ QuPoly<NT>::QuPoly(QuPoly<NT> const &temp){
 template <class NT>
 QuPoly<NT>::QuPoly(const string & str){
     BiPoly<NT> Sample(str, 't', 's');
-    // detailly, API use 'x' replacing 't' and ust 'y' replacing 's'
+    // detailly, API use 'x' replacing 't' and use 'y' replacing 's'
     int sdeg= Sample.getYdegree();
     
     Polynomial<NT> current_poly;
@@ -79,6 +80,29 @@ QuPoly<NT>::QuPoly(const string & str){
         }
     }
 }//QuPoly(const string & str)
+
+template <class NT>
+QuPoly<NT>::QuPoly(const string & str, ifstream & file){
+    BiPoly<NT> Sample(str, 't', 's');
+    // detailly, API use 'x' replacing 't' and use 'y' replacing 's'
+    int sdeg= Sample.getYdegree();
+    
+    Polynomial<NT> current_poly;
+    for(int i=0;i<= sdeg;i++)
+    {
+        current_poly=Sample.coeffX[i];
+        for(int j=0;j<= current_poly.getDegree();j++)
+        {
+            NT current_coef=current_poly.getCoeff(j);
+            if(current_coef!=NT(0)){
+//                cout<<"  Input the coefficient BiPoly (x,y) of ( s = "<<i<<" , t = "<<j<<" ) term:|  ";
+                Triple<NT> current_triple(j,i,file);
+                index.push_back(current_triple);
+            }
+        }
+    }
+}//QuPoly(const string & str,ifstream & file)
+
 
 template <class NT>
 string QuPoly<NT>::toString(char tvar, char svar) {

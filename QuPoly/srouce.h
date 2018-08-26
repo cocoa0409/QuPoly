@@ -21,26 +21,27 @@
 #include "QuPoly.h"
 #include "mk-definition.h"
 #include "Stack.h"
-
+#include <fstream>
 template <class NT>
-MKPred<NT> input_QuPoly_system()
+MKPred<NT> input_QuPoly_system(string path)
 {
-    string a;
-    cout<<"input step(1)  F : Discard all (x,y) of F as (t,s) form:| ";
-    cin>>a;
-    QuPoly<NT> F(a);
-    cout<<"input step(1)  G : Discard all (x,y) of G as (t,s) form:| ";
-    cin>>a;
-    QuPoly<NT> G(a);
+    string temp;
+    ifstream inputfile_qupoly_system;
+    inputfile_qupoly_system.open(path);
+//extract F from file
+    getline(inputfile_qupoly_system, temp);
+    QuPoly<NT> F(temp,inputfile_qupoly_system);
+//extract dividing line from file
+    getline(inputfile_qupoly_system, temp);
+    assert(temp=="");
+//extract G from file
+    getline(inputfile_qupoly_system, temp);
+    QuPoly<NT> G(temp,inputfile_qupoly_system);
+    
     MKPred<NT> system(F,G);
-    cout<<endl<<" F:"<<system.fxy_.toString()<<endl;
-    cout<<" G:"<<system.gxy_.toString()<<endl<<endl;
-    /*
-    cout<<"output dF/dx:"<<system.dfxy_dx.toString()<<endl;
-    cout<<"output dF/dy:"<<system.dfxy_dy.toString()<<endl;
-    cout<<"output dG/dx:"<<system.dgxy_dx.toString()<<endl;
-    cout<<"output dG/dy:"<<system.dgxy_dy.toString()<<endl;
-    */
+//    cout<<" F:"<<system.fxy_.toString()<<endl;
+//    cout<<" G:"<<system.gxy_.toString()<<endl<<endl;
+    inputfile_qupoly_system.close();
     return system;
 }
 
@@ -48,45 +49,26 @@ MKPred<NT> input_QuPoly_system()
 
 
 template <class NT>
-BoxT<NT>* input_box_region(string s)
+BoxT<NT>* input_box_region(string path)
 {
-    cout<<"input step(2)  "<<s<<" box :" <<endl;
     string temp1,temp2;
-    if(s=="varible")
-    {
-        cout<<"  <(> x )  =";
-        cin>>temp1;
-        cout<<"  ( x <)>  =";
-        cin>>temp2;
-        IntervalT<NT> XRegion(temp1,temp2);
+    ifstream inputfile_box;
+    inputfile_box.open(path);
+    getline(inputfile_box,temp1);
+    getline(inputfile_box,temp2);
+    IntervalT<NT> XRegion(temp1,temp2);
     
-        cout<<"  <(> y )  =";
-        cin>>temp1;
-        cout<<"  ( y <)>  =";
-        cin>>temp2;
-        IntervalT<NT> YRegion(temp1,temp2);
-        return ( new BoxT<NT>(0,XRegion,YRegion));
-    }
-    else
-    {
-        cout<<"  <(> t )  =";
-        cin>>temp1;
-        cout<<"  ( t <)>  =";
-        cin>>temp2;
-        IntervalT<NT> XRegion(temp1,temp2);
-        cout<<"  <(> s )  =";
-        cin>>temp1;
-        cout<<"  ( s <)>  =";
-        cin>>temp2;
-        IntervalT<NT> YRegion(temp1,temp2);
-        return ( new BoxT<NT>(0,XRegion,YRegion));
-    }
+    getline(inputfile_box,temp1);
+    getline(inputfile_box,temp2);
+    IntervalT<NT> YRegion(temp1,temp2);
+    inputfile_box.close();
+    return ( new BoxT<NT>(0,XRegion,YRegion));
 }
 
 template <class NT>
 void show_QuPoly_system(MKPred<NT> & system)
 {
-    cout<<endl<<"   &&&&& QuPoly system &&&&&   "<<endl;
+    cout<<"   &&&&& QuPoly system &&&&&   "<<endl;
     cout<<" / "<<endl;
     cout<<"| "<<system.fxy_.toString()<<" = 0"<<endl;
     cout<<"| "<<system.gxy_.toString()<<" = 0"<<endl;
@@ -97,7 +79,7 @@ void show_QuPoly_system(MKPred<NT> & system)
 template <class NT>
 void show_box_region(BoxT<NT> * var_box,BoxT<NT> * para_box)
 {
-    cout<<endl <<"   &&&&&  Box  region  &&&&&   "<<endl;
+    cout<<"   &&&&&  Box  region  &&&&&   "<<endl;
     cout<<" / "<<endl;
     cout<<"| varible box: (x,y) in "<<*var_box<<endl;
     cout<<"| parameter box: (t,s) in "<<*para_box<<endl;
@@ -148,19 +130,14 @@ NT min_box_area(Stack<BoxT<NT>> & stack)
 
 
 template <class NT>
-void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , queue<BoxT<NT>> * solvable_boxes , queue<BoxT<NT>> * unsolvable_boxes )
+void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , queue<BoxT<NT>> * solvable_boxes , queue<BoxT<NT>> * unsolvable_boxes,string output_path,NT beta,NT theta)
 {
-    
-    ofstream mycout("temp.txt");
-    NT beta = 0.99;
-    NT theta= 0.000000000000000000000000000000000000000000000000000000000000000000000000001;
-    
-
     Stack<BoxT<NT>> Svar;
     int i;
     bool flag;
     NT total_area=box_area(*para_box);
-    
+    ofstream out;
+    out.open(output_path);
 //1
     queue<BoxT<NT>> Ppara;
     Ppara.push( *para_box );
@@ -187,9 +164,11 @@ void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , qu
 //9
                 solvable_boxes->push(*pbar);
                 cout<<"---- push "<<*pbar<<" to solvable queue."<<endl;
-                mycout<<"---- push "<<*pbar<<" to solvable queue."<<endl;
-                cout<<"-------- Now : "<<boxes_area(solvable_boxes)*100/total_area<<"% solvable"<<endl;
-                cout<<"-------- Now : "<<boxes_area(unsolvable_boxes)*100/total_area<<"% unsolvable"<<endl;
+                cout<<"-------- Now : "<<boxes_area(solvable_boxes)*100/total_area<<"% solvable , ";
+                cout<<boxes_area(unsolvable_boxes)*100/total_area<<"% unsolvable"<<endl;
+                out<<"---- push "<<*pbar<<" to solvable queue."<<endl;
+                out<<"-------- Now : "<<boxes_area(solvable_boxes)*100/total_area<<"% solvable , ";
+                out<<boxes_area(unsolvable_boxes)*100/total_area<<"% unsolvable"<<endl;
 //10
                 flag = true;
                 
@@ -206,9 +185,11 @@ void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , qu
 //14
                     unsolvable_boxes->push(*pbar);
                     cout<<"---- push "<<*pbar<<" to unsolvable queue."<<endl;
-                    mycout<<"---- push "<<*pbar<<" to unsolvable queue."<<endl;
-                    cout<<"-------- Now : "<<boxes_area(solvable_boxes)*100/total_area<<"% solvable"<<endl;
-                    cout<<"-------- Now : "<<boxes_area(unsolvable_boxes)*100/total_area<<"% unsolvable"<<endl;
+                    cout<<"-------- Now : "<<boxes_area(solvable_boxes)*100/total_area<<"% solvable , ";
+                    cout<<boxes_area(unsolvable_boxes)*100/total_area<<"% unsolvable"<<endl;
+                    out<<"---- push "<<*pbar<<" to unsolvable queue."<<endl;
+                    out<<"-------- Now : "<<boxes_area(solvable_boxes)*100/total_area<<"% solvable , ";
+                    out<<boxes_area(unsolvable_boxes)*100/total_area<<"% unsolvable"<<endl;
 //15
                     flag = true;
 //16
@@ -246,16 +227,14 @@ void Algorithm( MKPred<NT> system , BoxT<NT> * var_box, BoxT<NT> * para_box , qu
         }
         delete pbar;
     }
-    mycout.close();
+    out.close();
 }
-
-
 template <class NT>
 void Output_area(BoxT<NT> * para_box, queue<BoxT<NT>> * solvable_boxes, queue<BoxT<NT>> * unsolvable_boxes )
 {
     
     NT total_area=box_area(*para_box);
-    cout<<"   &&&&&  Result  &&&&&   "<<endl;
+    cout<<endl<<"   &&&&&  Result  &&&&&   "<<endl;
     cout<<" / "<<endl;
     cout<<"| sovlable boxes total: "<<boxes_area(solvable_boxes)*100/total_area<<endl;
     cout<<"| unsolvable boxes total : "<<boxes_area(unsolvable_boxes)*100/total_area<<endl;

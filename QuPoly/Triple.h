@@ -28,6 +28,7 @@ public:
     Triple();
     Triple(Triple<NT> const &temp);
     Triple(int t,int s);
+    Triple(int t,int s, ifstream & file);
     Triple(int t,int s, BiPoly<NT> & bipoly);
 //methods
     string toString(char tvar='t', char svar='s');
@@ -62,6 +63,19 @@ Triple<NT>::Triple(int t,int s){
     BiPoly<NT> coeffbipoly_mid(bipoly);
     coeffbipoly = coeffbipoly_mid;
 }//Triple(int t,int s)
+
+template <class NT>
+Triple<NT>::Triple(int t,int s,ifstream & file){
+    tdeg=t;
+    sdeg=s;
+    //    cout<<"(t="<<t<<",s="<<s<<"):Input the coeff_BiPoly(x,y)"<<endl;
+    string bipoly;
+//    cin>>bipoly;
+    getline(file, bipoly);
+    BiPoly<NT> coeffbipoly_mid(bipoly);
+    coeffbipoly = coeffbipoly_mid;
+}//Triple(int t,int s,ifstream & file)
+
 
 template <class NT>
 Triple<NT>::Triple(int t,int s, BiPoly<NT> & bipoly){
@@ -110,7 +124,8 @@ IntervalT<NT> Triple<NT>::eval(BoxT<NT> & para_box, BoxT<NT> & var_box )
     IntervalT<NT> x_range=var_box.x_range;
     IntervalT<NT> y_range=var_box.y_range;
 //compute bipoly
-    IntervalT<NT> xy_result=coeffbipoly.eval2(x_range, y_range);
+    //IntervalT<NT> xy_result=coeffbipoly.eval2(x_range, y_range);
+    IntervalT<NT> xy_result=coeffbipoly.eval1(x_range, y_range);
     IntervalT<NT> t_result(1),s_result(1);
 //compute t
     for(int i=0;i<tdeg;i++){
